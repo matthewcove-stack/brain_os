@@ -23,5 +23,5 @@ Otherwise make the smallest reasonable assumption and note it.
 ## Verification
 A phase is complete only when:
 - services start successfully
-- verification commands pass
+- declared verification commands pass
 - docs/current_state.md is updated

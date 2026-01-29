@@ -6,7 +6,14 @@
 - Contracts established
 
 ## Phase 1 (next)
-Natural-language intent → Notion task created or updated end-to-end
+Single vertical slice:
+Natural-language intent → Notion task created or updated
+
+Includes:
+- Intent normalisation
+- Action execution
+- Idempotency
+- Error handling
 
 ## Phase 2 (later)
 - Clarification inbox
