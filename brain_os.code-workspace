@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../action_relay"
+		},
+		{
+			"path": "../context_api"
+		},
+		{
+			"path": "../intent_normaliser"
+		},
+		{
+			"path": "../notion_assistant_contracts"
+		},
+		{
+			"path": "../notion_gateway"
+		}
+	],
+	"settings": {}
+}
