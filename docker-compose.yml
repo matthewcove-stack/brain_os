@@ -1,12 +1,116 @@
 version: "3.9"
 
 services:
+  intent_postgres:
+    image: postgres:16
+    container_name: brainos_intent_postgres
+    environment:
+      POSTGRES_DB: intent
+      POSTGRES_USER: intent
+      POSTGRES_PASSWORD: intent
+    volumes:
+      - intent_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U intent -d intent"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    networks:
+      brain_os:
+        aliases:
+          - intent_postgres
+
+  intent_migrate:
+    build:
+      context: ../intent_normaliser
+    container_name: brainos_intent_migrate
+    environment:
+      DATABASE_URL: postgresql+psycopg://intent:intent@intent_postgres:5432/intent
+    depends_on:
+      intent_postgres:
+        condition: service_healthy
+    command: ["alembic", "upgrade", "head"]
+    networks:
+      - brain_os
+
   intent_normaliser:
-    image: intent_normaliser
+    build:
+      context: ../intent_normaliser
+    container_name: brainos_intent_normaliser
+    environment:
+      DATABASE_URL: postgresql+psycopg://intent:intent@intent_postgres:5432/intent
+      INTENT_SERVICE_TOKEN: ${INTENT_SERVICE_TOKEN:-change-me}
+      USER_TIMEZONE: Europe/London
+      MIN_CONFIDENCE_TO_WRITE: "0.75"
+      MAX_INFERRED_FIELDS: "2"
+      EXECUTE_ACTIONS: ${EXECUTE_ACTIONS:-true}
+      GATEWAY_BASE_URL: http://notion_gateway:5678/webhook
+      GATEWAY_BEARER_TOKEN: ${GATEWAY_BEARER_TOKEN:-change_me_api_token}
+      GATEWAY_TASKS_CREATE_PATH: /v1/notion/tasks/create
+      GATEWAY_TASKS_UPDATE_PATH: /v1/notion/tasks/update
+      GATEWAY_TIMEOUT_SECONDS: "15"
+      VERSION: "0.0.0"
+      GIT_SHA: "unknown"
     ports:
       - "8000:8000"
+    depends_on:
+      intent_postgres:
+        condition: service_healthy
+      intent_migrate:
+        condition: service_completed_successfully
+      notion_gateway:
+        condition: service_started
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    networks:
+      brain_os:
+        aliases:
+          - intent_normaliser
+
+  notion_postgres:
+    image: postgres:15
+    container_name: brainos_notion_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: n8n
+      POSTGRES_PASSWORD: n8n
+      POSTGRES_DB: n8n
+    volumes:
+      - notion_postgres_data:/var/lib/postgresql/data
+    networks:
+      brain_os:
+        aliases:
+          - notion_postgres
 
   notion_gateway:
-    image: notion_gateway
+    image: n8nio/n8n:1.66.0
+    container_name: brainos_notion_gateway
+    restart: unless-stopped
+    depends_on:
+      - notion_postgres
     ports:
-      - "3000:3000"
+      - "5678:5678"
+    env_file:
+      - ../notion_gateway/.env
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: notion_postgres
+      DB_POSTGRESDB_DATABASE: n8n
+      DB_POSTGRESDB_USER: n8n
+      DB_POSTGRESDB_PASSWORD: n8n
+    volumes:
+      - notion_n8n_data:/home/node/.n8n
+      - ../notion_gateway/schemas:/files/schemas:ro
+    networks:
+      brain_os:
+        aliases:
+          - notion_gateway
+
+volumes:
+  intent_postgres_data:
+  notion_postgres_data:
+  notion_n8n_data:
+
+networks:
+  brain_os:
+    name: brain_os_net
