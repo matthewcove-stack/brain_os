@@ -44,10 +44,10 @@ services:
       MIN_CONFIDENCE_TO_WRITE: "0.75"
       MAX_INFERRED_FIELDS: "2"
       EXECUTE_ACTIONS: ${EXECUTE_ACTIONS:-true}
-      GATEWAY_BASE_URL: http://notion_gateway:5678/webhook
+      GATEWAY_BASE_URL: ${GATEWAY_BASE_URL:-http://notion_gateway:5678/webhook}
       GATEWAY_BEARER_TOKEN: ${GATEWAY_BEARER_TOKEN:-change_me_api_token}
-      GATEWAY_TASKS_CREATE_PATH: /v1/notion/tasks/create
-      GATEWAY_TASKS_UPDATE_PATH: /v1/notion/tasks/update
+      GATEWAY_TASKS_CREATE_PATH: ${GATEWAY_TASKS_CREATE_PATH:-/v1/notion/tasks/create}
+      GATEWAY_TASKS_UPDATE_PATH: ${GATEWAY_TASKS_UPDATE_PATH:-/v1/notion/tasks/update}
       GATEWAY_TIMEOUT_SECONDS: "15"
       VERSION: "0.0.0"
       GIT_SHA: "unknown"
