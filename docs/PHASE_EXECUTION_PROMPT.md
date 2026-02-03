@@ -1,18 +1,19 @@
-# Phase Execution Prompt — Brain OS
+# Phase Execution Prompt (Canonical)
 
-You are implementing a single defined phase of Brain OS.
+You are implementing the requested phase ONLY.
 
 Rules:
-- Implement only the requested phase
-- Follow the truth hierarchy in AGENTS.md
-- Do not pre-empt future phases
-- Prefer minimal, testable changes
+- Do not implement future phases.
+- Do not refactor unrelated code.
+- Follow docs/intent.md.
+- Update docs/current_state.md after changes.
+- Use the smallest safe assumptions; document them.
+- If verification fails twice, stop and report.
 
-Process:
-1. Re-read docs/intent.md and docs/current_state.md
-2. Implement the requested phase only
-3. Add or update tests as defined
-4. Run verification commands
-5. Update docs/current_state.md
+## Mandatory enforcement (Drift Guard MCP)
+Before claiming completion, call these MCP tools and ensure ok=true:
+- repo_contract_validate()
+- verify_run(profile="default")
+- drift_check()
 
-Stop if assumptions affect correctness or safety.
+Include the returned JSON in your final phase report.
