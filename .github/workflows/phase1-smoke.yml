@@ -1,0 +1,77 @@
+name: Phase 1 Smoke
+
+on:
+  workflow_dispatch:
+
+jobs:
+  phase1-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      INTENT_SERVICE_TOKEN: ${{ secrets.INTENT_SERVICE_TOKEN || 'change-me' }}
+      GATEWAY_BEARER_TOKEN: ${{ secrets.API_BEARER_TOKEN }}
+      API_BEARER_TOKEN: ${{ secrets.API_BEARER_TOKEN }}
+      BOOTSTRAP_BEARER_TOKEN: ${{ secrets.BOOTSTRAP_BEARER_TOKEN }}
+      NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+      N8N_BASIC_AUTH_USER: ${{ secrets.N8N_BASIC_AUTH_USER }}
+      N8N_BASIC_AUTH_PASSWORD: ${{ secrets.N8N_BASIC_AUTH_PASSWORD }}
+      N8N_ENCRYPTION_KEY: ${{ secrets.N8N_ENCRYPTION_KEY }}
+      N8N_API_KEY: ${{ secrets.N8N_API_KEY }}
+    steps:
+      - name: Checkout brain_os
+        uses: actions/checkout@v4
+        with:
+          path: brain_os
+
+      - name: Checkout intent_normaliser
+        uses: actions/checkout@v4
+        with:
+          repository: matthewcove-stack/intent_normaliser
+          path: intent_normaliser
+
+      - name: Checkout notion_gateway
+        uses: actions/checkout@v4
+        with:
+          repository: matthewcove-stack/notion_gateway
+          path: notion_gateway
+
+      - name: Write notion_gateway .env
+        shell: bash
+        run: |
+          cat > notion_gateway/.env <<'EOF'
+          N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+          N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+          N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+          N8N_HOST=localhost
+          N8N_PORT=5678
+          N8N_PROTOCOL=http
+          WEBHOOK_URL=http://localhost:5678/
+          NOTION_API_KEY=${NOTION_API_KEY}
+          BOOTSTRAP_BEARER_TOKEN=${BOOTSTRAP_BEARER_TOKEN}
+          API_BEARER_TOKEN=${API_BEARER_TOKEN}
+          NODE_FUNCTION_ALLOW_BUILTIN=fs,path
+          SMOKE_BASE_URL=http://n8n:5678
+          N8N_API_KEY=${N8N_API_KEY}
+          SMOKE_N8N_API_BASE=http://n8n:5678
+          EOF
+
+      - name: Start services
+        working-directory: brain_os
+        shell: bash
+        run: |
+          docker compose up -d --build
+
+      - name: Run Phase 1 smoke test
+        working-directory: brain_os
+        shell: pwsh
+        run: |
+          ./scripts/phase1_smoke.ps1
+
+      - name: Dump logs on failure
+        if: failure()
+        working-directory: brain_os
+        shell: bash
+        run: |
+          docker compose ps
+          docker compose logs intent_normaliser
+          docker compose logs notion_gateway

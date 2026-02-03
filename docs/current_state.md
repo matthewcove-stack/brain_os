@@ -4,20 +4,33 @@
 - Intent ingestion and normalisation
 - Shared schema contracts
 - Notion Gateway API surface
-- Manual local execution
+- End-to-end execution (intent_normaliser -> notion_gateway) when `EXECUTE_ACTIONS=true`
+- Phase 1 smoke test script (`.\scripts\phase1_smoke.ps1`)
 
 ## What is incomplete
-- Action execution partially stubbed
 - Context sync is manual
 - No clarification UI
-- No automated end-to-end tests
+- CI smoke test requires secrets and is manual (workflow_dispatch only)
 
-## Phase 1 verification (planned)
+## Phase 1 verification
 A Phase 1 implementation is considered complete only when:
 - A natural-language intent creates or updates a Notion task
 - Duplicate submissions are idempotent
-- Errors are surfaced clearly to the user
+- Errors are surfaced clearly to the user (`error.code`, `error.message`, `error.details.status_code`)
 - All verification commands pass
+
+## CI (manual)
+Workflow: `.github/workflows/phase1-smoke.yml`
+
+Required GitHub Actions secrets:
+- `NOTION_API_KEY`
+- `API_BEARER_TOKEN`
+- `BOOTSTRAP_BEARER_TOKEN`
+- `N8N_BASIC_AUTH_USER`
+- `N8N_BASIC_AUTH_PASSWORD`
+- `N8N_ENCRYPTION_KEY`
+- `N8N_API_KEY` (optional if n8n API is enabled)
+- `INTENT_SERVICE_TOKEN` (optional; defaults to `change-me`)
 
 ## Phase 1 how to run (Windows)
 Prereqs:
