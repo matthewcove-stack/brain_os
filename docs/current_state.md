@@ -5,6 +5,7 @@
 - Shared schema contracts
 - Notion Gateway API surface
 - End-to-end execution (intent_normaliser -> notion_gateway) when `EXECUTE_ACTIONS=true`
+- Lambic voice intake client (`../lambic_voice_client`) for voice/text capture into the pipeline
 - Phase 1 smoke test script (`.\scripts\phase1_smoke.ps1`)
 
 ## What is incomplete

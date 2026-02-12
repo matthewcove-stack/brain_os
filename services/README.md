@@ -14,6 +14,9 @@ This system is composed of the following repositories:
 - action_relay  
   https://github.com/matthewcove-stack/action_relay
 
+- lambic_voice_client  
+  https://github.com/matthewcove-stack/lambic_voice_client
+
 - notion_assistant_contracts  
   https://github.com/matthewcove-stack/notion_assistant_contracts
 
