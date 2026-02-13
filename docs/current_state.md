@@ -7,6 +7,8 @@
 - End-to-end execution (intent_normaliser -> notion_gateway) when `EXECUTE_ACTIONS=true`
 - Lambic voice intake client (`../lambic_voice_client`) for voice/text capture into the pipeline
 - Phase 1 smoke test script (`.\scripts\phase1_smoke.ps1`)
+- Phase 3 containerized voice services (`voice_api`, `voice_web`) in `docker-compose.yml`
+- Phase 3 smoke test script (`.\scripts\phase3_smoke.ps1`)
 
 ## What is incomplete
 - Context sync is manual
