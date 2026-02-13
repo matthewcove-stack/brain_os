@@ -19,3 +19,9 @@ Includes:
 - Clarification inbox
 - Calendar events
 - Personal vs business routing
+
+---
+
+## MVP to Market
+
+See `docs/mvp_to_market.md` for the cross-repo phase plan and prompts.
