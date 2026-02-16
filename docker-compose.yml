@@ -53,6 +53,7 @@ services:
       GATEWAY_TIMEOUT_SECONDS: "15"
       VERSION: "0.0.0"
       GIT_SHA: "unknown"
+      INTENT_CORS_ORIGINS: ${INTENT_CORS_ORIGINS:-http://localhost:8088,http://localhost:5173,https://voice.lambiclabs.com}
     ports:
       - "8000:8000"
     depends_on:
