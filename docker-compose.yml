@@ -136,6 +136,11 @@ services:
     build:
       context: ../lambic_voice_client
       dockerfile: apps/web/Dockerfile
+      args:
+        VITE_NORMALISER_BASE_URL: ${VITE_NORMALISER_BASE_URL:-http://localhost:8000}
+        VITE_NORMALISER_BEARER_TOKEN: ${VITE_NORMALISER_BEARER_TOKEN:-}
+        VITE_TRANSCRIBE_BASE_URL: ${VITE_TRANSCRIBE_BASE_URL:-http://localhost:8787}
+        VITE_PACKET_BASE_URL: ${VITE_PACKET_BASE_URL:-}
     container_name: brainos_voice_web
     ports:
       - "8088:8080"

@@ -1,0 +1,11 @@
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:2024.10.0
+    command: ["tunnel", "--no-autoupdate", "run", "--token", "${CLOUDFLARE_TUNNEL_TOKEN}"]
+    restart: unless-stopped
+    depends_on:
+      - voice_web
+      - voice_api
+      - intent_normaliser
+    networks:
+      - brain_os
