@@ -93,3 +93,13 @@ See `docs/phases.md` and `docs/phase_plans/*`.
   - Verification:
     - `docker compose build voice_web` passes.
     - `docker compose exec -T intent_normaliser pytest -q tests/test_api.py -k "auto_infers or list_target_routes_to_list_add_item_action or notes_target_routes_to_note_capture_action"` passes.
+- 2026-02-17 — Phase 2 implemented:
+  - `intent_normaliser`: added voice status-command parsing:
+    - `mark <task> done` -> `Done`
+    - `start <task>` -> `In Progress`
+    - `pause <task>` -> `Todo`
+  - `intent_normaliser`: added task search resolver integration and ambiguity clarification for task selection.
+  - `notion_gateway`: notion search workflow now returns task metadata (`status`, `due`) for disambiguation.
+  - Verification:
+    - `docker compose exec -T intent_normaliser pytest -q tests/test_api.py -k "phase2_status_update or auto_infers"` passes.
+    - Runtime check for `mark call bob done` returns clarification when no high-confidence task match is found.
