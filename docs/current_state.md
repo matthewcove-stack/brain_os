@@ -78,8 +78,18 @@ docker compose logs -f notion_gateway
 ## Next phases
 Targeting rapid improvements to the voice capture loop.
 
-- Phase 1: frictionless capture defaults (auto inference + default task status)
+- Phase 1: frictionless capture defaults (implemented)
 - Phase 2: task lifecycle from voice (status update intents + task resolution)
 - Phase 3: URL + file capture (MVP)
 
 See `docs/phases.md` and `docs/phase_plans/*`.
+
+## Phase Progress Log
+- 2026-02-17 — Phase 1 implemented:
+  - `lambic_voice_client`: added `auto` destination and made it default.
+  - `intent_normaliser`: deterministic auto inference for shopping/task/note when destination is omitted; weak matches return clarification choices.
+  - `intent_normaliser`: task create defaults `status` to `Todo`.
+  - `notion_gateway`: task create workflow enforces `Status = Todo` if missing.
+  - Verification:
+    - `docker compose build voice_web` passes.
+    - `docker compose exec -T intent_normaliser pytest -q tests/test_api.py -k "auto_infers or list_target_routes_to_list_add_item_action or notes_target_routes_to_note_capture_action"` passes.
