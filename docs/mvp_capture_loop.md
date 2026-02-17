@@ -105,3 +105,6 @@ MVP is "usable" when ALL are true:
 ## Operational notes
 - Keep raw_text (natural_language) stored for MVP debugging.
 - Provide a documented purge policy later (post-MVP).
+
+## Capture defaults
+- Client defaults to **Auto** destination; server infers task/note/shopping when not specified.

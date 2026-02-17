@@ -74,3 +74,12 @@ docker compose logs -f notion_gateway
 - Single user
 - Notion is the system of record
 - Reliability over cleverness
+
+## Next phases
+Targeting rapid improvements to the voice capture loop.
+
+- Phase 1: frictionless capture defaults (auto inference + default task status)
+- Phase 2: task lifecycle from voice (status update intents + task resolution)
+- Phase 3: URL + file capture (MVP)
+
+See `docs/phases.md` and `docs/phase_plans/*`.
