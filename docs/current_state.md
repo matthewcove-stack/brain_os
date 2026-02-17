@@ -103,3 +103,11 @@ See `docs/phases.md` and `docs/phase_plans/*`.
   - Verification:
     - `docker compose exec -T intent_normaliser pytest -q tests/test_api.py -k "phase2_status_update or auto_infers"` passes.
     - Runtime check for `mark call bob done` returns clarification when no high-confidence task match is found.
+- 2026-02-17 — Phase 3 implemented:
+  - `lambic_voice_client`: added URL input, file picker, and drag-drop capture in the web app.
+  - `lambic_voice_client`: text-like files include extracted text plus metadata (`filename`, `mime`, `size`, `sha256`); binaries include metadata-only payloads.
+  - `intent_normaliser`: URL/file payloads now auto-route to `capture_note` with structured note content and tags (`url` / `file`).
+  - `notion_gateway`: notes capture workflow now maps note content/tags safely against available DB properties (`Notes`/`Knowledge` schemas).
+  - Verification:
+    - `docker compose build voice_web` passes.
+    - `docker compose exec -T intent_normaliser pytest -q tests/test_api.py -k "phase3_"` passes.
