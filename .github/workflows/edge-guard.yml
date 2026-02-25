@@ -1,0 +1,14 @@
+name: edge-guard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate-edge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate edge contract
+        run: bash scripts/edge_validate.sh
