@@ -1,0 +1,9 @@
+services:
+  voice_web:
+    networks:
+    - brain_os
+    - edge
+networks:
+  edge:
+    external: true
+    name: edge

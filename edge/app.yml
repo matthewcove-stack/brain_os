@@ -1,0 +1,7 @@
+app: brain-os
+entry_service: voice_web
+entry_port: 8080
+dev_hostnames:
+- brain-os.localhost
+prod_hostnames:
+- voice.lambiclabs.com

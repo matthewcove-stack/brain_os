@@ -111,3 +111,8 @@ See `docs/phases.md` and `docs/phase_plans/*`.
   - Verification:
     - `docker compose build voice_web` passes.
     - `docker compose exec -T intent_normaliser pytest -q tests/test_api.py -k "phase3_"` passes.
+
+## Edge Integration
+- Entry service: `voice_web` on `8080`
+- Dev route: `http://brain-os.localhost`
+- Run with `make dev` (shared edge + compose.edge.yml).

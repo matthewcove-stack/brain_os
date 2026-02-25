@@ -17,3 +17,10 @@ This repository is the canonical system home for the Brain OS.
 ```bash
 docker compose up
 ```
+
+## Edge Dev
+- `make dev`
+- `http://brain-os.localhost`
+- `docs/current_state.md` (authoritative)
+- `docs/edge_integration.md`
+
