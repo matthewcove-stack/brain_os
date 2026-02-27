@@ -18,6 +18,10 @@ This repository is the canonical system home for the Brain OS.
 docker compose up
 ```
 
+Compose now includes:
+- `intent_normaliser`, `notion_gateway`, `voice_api`, `voice_web`
+- `context_api` and `context_research_worker` for research retrieval + continuous ingestion
+
 ## Edge Dev
 - `make dev`
 - `http://brain-os.localhost`

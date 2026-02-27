@@ -53,6 +53,12 @@ services:
       GATEWAY_LISTS_ADD_ITEM_PATH: ${GATEWAY_LISTS_ADD_ITEM_PATH:-/v1/notion/lists/add_item}
       GATEWAY_NOTES_CAPTURE_PATH: ${GATEWAY_NOTES_CAPTURE_PATH:-/v1/notion/notes/capture}
       GATEWAY_TIMEOUT_SECONDS: '15'
+      CONTEXT_API_BASE_URL: ${CONTEXT_API_BASE_URL:-http://context_api:8001}
+      CONTEXT_API_BEARER_TOKEN: ${CONTEXT_API_BEARER_TOKEN:-change-me}
+      CONTEXT_API_RESEARCH_ENABLED: ${CONTEXT_API_RESEARCH_ENABLED:-false}
+      CONTEXT_API_RESEARCH_TOPIC_KEY: ${CONTEXT_API_RESEARCH_TOPIC_KEY:-general}
+      CONTEXT_API_RESEARCH_MAX_ITEMS: ${CONTEXT_API_RESEARCH_MAX_ITEMS:-3}
+      CONTEXT_API_RESEARCH_RECENCY_DAYS: ${CONTEXT_API_RESEARCH_RECENCY_DAYS:-30}
       VERSION: 0.0.0
       GIT_SHA: unknown
       INTENT_CORS_ORIGINS: ${INTENT_CORS_ORIGINS:-http://localhost:8088,http://localhost:5173,https://voice.lambiclabs.com}
@@ -64,6 +70,8 @@ services:
       intent_migrate:
         condition: service_completed_successfully
       notion_gateway:
+        condition: service_started
+      context_api:
         condition: service_started
     command:
     - uvicorn
@@ -114,6 +122,92 @@ services:
       brain_os:
         aliases:
         - notion_gateway
+  context_postgres:
+    image: postgres:16
+    container_name: brainos_context_postgres
+    environment:
+      POSTGRES_DB: context
+      POSTGRES_USER: context
+      POSTGRES_PASSWORD: context
+    volumes:
+    - context_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pg_isready -U context -d context
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    networks:
+      brain_os:
+        aliases:
+        - context_postgres
+  context_migrate:
+    build:
+      context: ../context_api
+    container_name: brainos_context_migrate
+    environment:
+      DATABASE_URL: postgresql+psycopg://context:context@context_postgres:5432/context
+    depends_on:
+      context_postgres:
+        condition: service_healthy
+    command:
+    - alembic
+    - upgrade
+    - head
+    networks:
+    - brain_os
+  context_api:
+    build:
+      context: ../context_api
+    container_name: brainos_context_api
+    environment:
+      DATABASE_URL: postgresql+psycopg://context:context@context_postgres:5432/context
+      CONTEXT_API_TOKEN: ${CONTEXT_API_BEARER_TOKEN:-change-me}
+      VERSION: 0.0.0
+      GIT_SHA: unknown
+    depends_on:
+      context_postgres:
+        condition: service_healthy
+      context_migrate:
+        condition: service_completed_successfully
+    command:
+    - uvicorn
+    - app.main:app
+    - --host
+    - 0.0.0.0
+    - --port
+    - '8001'
+    networks:
+      brain_os:
+        aliases:
+        - context_api
+  context_research_worker:
+    build:
+      context: ../context_api
+    container_name: brainos_context_research_worker
+    environment:
+      DATABASE_URL: postgresql+psycopg://context:context@context_postgres:5432/context
+      CONTEXT_API_TOKEN: ${CONTEXT_API_BEARER_TOKEN:-change-me}
+      RESEARCH_WORKER_ENABLED: ${RESEARCH_WORKER_ENABLED:-true}
+      RESEARCH_SOURCE_FAILURE_THRESHOLD: ${RESEARCH_SOURCE_FAILURE_THRESHOLD:-3}
+      RESEARCH_SOURCE_COOLDOWN_MINUTES: ${RESEARCH_SOURCE_COOLDOWN_MINUTES:-60}
+      RESEARCH_RUN_MAX_NEW_ITEMS: ${RESEARCH_RUN_MAX_NEW_ITEMS:-0}
+    depends_on:
+      context_postgres:
+        condition: service_healthy
+      context_migrate:
+        condition: service_completed_successfully
+    command:
+    - python
+    - -m
+    - app.research.worker
+    - --sleep-seconds
+    - '10'
+    networks:
+      brain_os:
+        aliases:
+        - context_research_worker
   voice_api:
     build:
       context: ../lambic_voice_client
@@ -167,6 +261,7 @@ volumes:
   intent_postgres_data: null
   notion_postgres_data: null
   notion_n8n_data: null
+  context_postgres_data: null
 networks:
   brain_os:
     name: brain_os_net

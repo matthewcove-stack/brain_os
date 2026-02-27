@@ -3,6 +3,10 @@ services:
     networks:
     - brain_os
     - edge
+  context_api:
+    networks:
+    - brain_os
+    - edge
 networks:
   edge:
     external: true

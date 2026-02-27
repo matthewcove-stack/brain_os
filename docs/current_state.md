@@ -9,6 +9,10 @@
 - Phase 1 smoke test script (`.\scripts\phase1_smoke.ps1`)
 - Phase 3 containerized voice services (`voice_api`, `voice_web`) in `docker-compose.yml`
 - Phase 3 smoke test script (`.\scripts\phase3_smoke.ps1`)
+- Integrated `context_api` runtime in compose:
+  - `context_api` service for retrieval
+  - `context_research_worker` for continuous research ingestion processing
+  - `intent_normaliser` defaults to internal `http://context_api:8001`
 
 ## What is incomplete
 - Context sync is manual
@@ -116,3 +120,4 @@ See `docs/phases.md` and `docs/phase_plans/*`.
 - Entry service: `voice_web` on `8080`
 - Dev route: `http://brain-os.localhost`
 - Run with `make dev` (shared edge + compose.edge.yml).
+- `context_api` is also attached to the shared `edge` network in `compose.edge.yml`.
