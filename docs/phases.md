@@ -69,3 +69,33 @@ See detailed phase plans in:
 - `docs/phase_plans/phase_1.md`
 - `docs/phase_plans/phase_2.md`
 - `docs/phase_plans/phase_3.md`
+
+---
+
+## Research Context Integration Program (implemented)
+
+This cross-repo program integrated research retrieval and operations hardening across:
+- `intent_normaliser`
+- `context_api`
+- `brain_os`
+
+Execution prompts and phase details:
+- `docs/prompts/research_context_phases_1_to_6.md`
+
+### Phase 1
+- Integrate `intent_normaliser` live flow with optional `context_api /v2/research/context/pack` enrichment.
+
+### Phase 2
+- Extend `context_api` ChatGPT Actions schema/instructions to include research retrieval endpoints.
+
+### Phase 3
+- Wire `context_api` and `context_research_worker` into the `brain_os` compose runtime.
+
+### Phase 4
+- Add source-level observability endpoints and dashboard query docs.
+
+### Phase 5
+- Add governance tooling: source moderation, raw payload redaction, and operator review queue.
+
+### Phase 6
+- Add PDF-aware extraction and feedback-tunable scoring weights.
